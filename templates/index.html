@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Réparations - Réparateur Expert</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Réparateur Expert</h1>
+        <p>Liste des Réparations en Cours</p>
+        <button onclick="document.getElementById('addClientModal').style.display='block'">Ajouter un Client</button>
+        <button onclick="document.getElementById('addRepairModal').style.display='block'">Ajouter une Réparation</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </header>
+
+    <div class="container">
+        <h2>Réparations à Faire</h2>
+        <ul class="repair-list">
+            {% for reparation in reparations %}
+            <li>
+                <h3>Client: {{ reparation.client.client_nom }}</h3>
+                <p>Appareil: {{ reparation.appareil }}</p>
+                <p>Description: {{ reparation.description }}</p>
+                <p>Date de dépôt: {{ reparation.date_depot.strftime('%d %B %Y') }}</p>
+                <p>Statut: {{ reparation.statut }}</p>
+                <button onclick="document.getElementById('editRepairModal{{ reparation.id }}').style.display='block'">Modifier</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('addClientModal').style.display='none'">&times;</span>
+            <h2>Ajouter un Client</h2>
+            <form action="/ajouter_client" method="post">
+                {{ client_form.hidden_tag() }}
+                {{ client_form.client_nom.label }}
+                {{ client_form.client_nom }}
+                {{ client_form.submit }}
+            </form>
+        </div>
+    </div>
+
+    <div id="addRepairModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('addRepairModal').style.display='none'">&times;</span>
+            <h2>Ajouter une Réparation</h2>
+            <form action="/ajouter_reparation" method="post">
+                {{ reparation_form.hidden_tag() }}
+                {{ reparation_form.clients.label }}
+                {{ reparation_form.clients }}
+                {{ reparation_form.appareil.label }}
+                {{ reparation_form.appareil }}
+                {{ reparation_form.description.label }}
+                {{ reparation_form.description }}
+                {{ reparation_form.submit }}
+            </form>
+        </div>
+    </div>
+
+    {% for reparation in reparations %}
+        <div id="editRepairModal{{ reparation.id }}" class="modal">
+            <div class="modal-content">
+                <span class="close"
+                      onclick="document.getElementById('editRepairModal{{ reparation.id }}').style.display='none'">
+                    &times;</span>
+                <h2>Modifier Réparation</h2>
+                <form action="/update_repair/{{ reparation.id }}" method="post">
+                    {{ reparation_form_update.hidden_tag() }}
+                    {{ reparation_form_update.appareil.label }}
+                    {{ reparation_form_update.appareil(value=reparation.appareil) }}
+                    {{ reparation_form_update.description.label }}
+                    {{ reparation_form_update.description(value=reparation.description) }}
+                    {{ reparation_form_update.statut.label }}
+                    {{ reparation_form_update.statut(value=reparation.statut) }}
+                    {{ reparation_form_update.submit }}
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+
+    <footer>
+        <p>&copy; 2024 Réparateur Expert. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        var modals = document.getElementsByClassName('modal');
+        window.onclick = function(event) {
+            for (var i = 0; i < modals.length; i++) {
+                if (event.target === modals[i]) {
+                    modals[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
