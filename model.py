@@ -1,6 +1,6 @@
 from datetime import date
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy.exc import IntegrityError
 db = SQLAlchemy()
 
 
@@ -14,9 +14,17 @@ class Reparation(db.Model):
 
     @staticmethod
     def create_reparation(client_id, appareil, description):
+        existing_reparation = Reparation.query.filter_by(client_id=client_id, appareil=appareil,
+                                                         description=description).first()
+        if existing_reparation:
+            return existing_reparation
         reparation = Reparation(client_id=client_id, appareil=appareil, description=description)
-        db.session.add(reparation)
-        db.session.commit()
+        try:
+            db.session.add(reparation)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            raise
         return reparation
 
     @staticmethod
@@ -45,7 +53,14 @@ class Client(db.Model):
 
     @staticmethod
     def create_client(client_nom):
+        existing_client = Client.query.filter_by(client_nom=client_nom).first()
+        if existing_client:
+            return existing_client
         client = Client(client_nom=client_nom)
-        db.session.add(client)
-        db.session.commit()
+        try:
+            db.session.add(client)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            raise
         return client

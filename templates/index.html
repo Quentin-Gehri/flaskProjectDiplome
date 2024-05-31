@@ -25,18 +25,20 @@
 
     <div class="container">
         <h2>Réparations à Faire</h2>
-        <ul class="repair-list">
-            {% for reparation in reparations %}
-            <li>
-                <h3>Client: {{ reparation.client.client_nom }}</h3>
-                <p>Appareil: {{ reparation.appareil }}</p>
-                <p>Description: {{ reparation.description }}</p>
-                <p>Date de dépôt: {{ reparation.date_depot.strftime('%d %B %Y') }}</p>
-                <p>Statut: {{ reparation.statut }}</p>
-                <button onclick="document.getElementById('editRepairModal{{ reparation.id }}').style.display='block'">Modifier</button>
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="repair-list-container">
+            <ul class="repair-list">
+                {% for reparation in reparations %}
+                <li>
+                    <h3>Client: {{ reparation.client.client_nom }}</h3>
+                    <p>Appareil: {{ reparation.appareil }}</p>
+                    <p>Description: {{ reparation.description }}</p>
+                    <p>Date de dépôt: {{ reparation.date_depot.strftime('%d %B %Y') }}</p>
+                    <p>Statut: {{ reparation.statut }}</p>
+                    <button onclick="document.getElementById('editRepairModal{{ reparation.id }}').style.display='block'">Modifier</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
     <div id="addClientModal" class="modal">

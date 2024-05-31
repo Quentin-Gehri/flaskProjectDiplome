@@ -2,42 +2,66 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+
 header {
     background-color: #4CAF50;
     color: white;
     padding: 15px 0;
     text-align: center;
+    flex-shrink: 0;
 }
+
 .container {
     padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Allows the container to be scrollable */
 }
+
+.repair-list-container {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
 .repair-list {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
+
 .repair-list li {
     background: #f9f9f9;
     margin: 10px 0;
     padding: 10px;
     border: 1px solid #ddd;
 }
+
 .repair-list h3 {
     margin: 0;
     padding: 0;
 }
+
 .repair-list p {
     margin: 5px 0;
 }
+
 footer {
     background-color: #4CAF50;
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: fixed;
-    width: 100%;
+    position: relative;
     bottom: 0;
+    left: 0;
+    width: 100%;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -49,6 +73,7 @@ footer {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -56,31 +81,37 @@ footer {
     border: 1px solid #888;
     width: 80%;
 }
+
 .close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
+
 .close:hover,
 .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
+
 form {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
 }
+
 form label {
     margin-bottom: 5px;
 }
+
 form select, form input, form textarea {
     margin-bottom: 10px;
     padding: 8px;
     border: 1px solid #ddd;
 }
+
 button {
     background-color: #4CAF50;
     color: white;
@@ -89,6 +120,7 @@ button {
     cursor: pointer;
     margin: 5px;
 }
+
 button:hover {
     background-color: #45a049;
 }
