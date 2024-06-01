@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_wtf import CSRFProtect
 from form import ReparationForm, ClientForm, ReparationFormUpdate
 from model import db, Client, Reparation
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///reparations.db'
 app.config['SECRET_KEY'] = 'reparateur'
+csrf = CSRFProtect(app)
+csrf.init_app(app)
 db.init_app(app)
 app.app_context().push()
 with app.app_context():
