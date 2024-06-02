@@ -14,10 +14,6 @@ class Reparation(db.Model):
 
     @staticmethod
     def create_reparation(client_id, appareil, description):
-        existing_reparation = Reparation.query.filter_by(client_id=client_id, appareil=appareil,
-                                                         description=description).first()
-        if existing_reparation:
-            return existing_reparation
         reparation = Reparation(client_id=client_id, appareil=appareil, description=description)
         try:
             db.session.add(reparation)
@@ -55,7 +51,7 @@ class Client(db.Model):
     def create_client(client_nom):
         existing_client = Client.query.filter_by(client_nom=client_nom).first()
         if existing_client:
-            return existing_client
+            return False
         client = Client(client_nom=client_nom)
         try:
             db.session.add(client)
