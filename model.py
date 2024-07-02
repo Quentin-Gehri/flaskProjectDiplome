@@ -10,7 +10,7 @@ class Reparation(db.Model):
     appareil = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=False)
     date_depot = db.Column(db.Date, nullable=False, default=date.today)
-    statut = db.Column(db.String(50), nullable=False, default='A faire')
+    statut = db.Column(db.String(50), nullable=False, default='À faire')
 
     @staticmethod
     def create_reparation(client_id, appareil, description):
@@ -24,8 +24,8 @@ class Reparation(db.Model):
         return reparation
 
     @staticmethod
-    def fetch_reparations():
-        return Reparation.query.all()
+    def fetch_reparations(statut):
+        return Reparation.query.filter_by(statut=statut).all()
 
     @staticmethod
     def update_reparation(reparation_id, appareil=None, description=None, statut=None):
@@ -44,15 +44,16 @@ class Reparation(db.Model):
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    client_nom = db.Column(db.String(100), nullable=False, unique=True)
+    client_nom = db.Column(db.String(100), nullable=False)
+    client_email = db.Column(db.String(100), nullable=False, unique=True)
     reparations = db.relationship('Reparation', backref='client', lazy=True)
 
     @staticmethod
-    def create_client(client_nom):
-        existing_client = Client.query.filter_by(client_nom=client_nom).first()
+    def create_client(client_nom, client_email):
+        existing_client = Client.query.filter_by(client_email=client_email).first()
         if existing_client:
             return False
-        client = Client(client_nom=client_nom)
+        client = Client(client_nom=client_nom, client_email=client_email)
         try:
             db.session.add(client)
             db.session.commit()

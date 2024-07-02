@@ -9,7 +9,6 @@
 <body>
     <header>
         <h1>Réparateur Expert</h1>
-        <p>Liste des Réparations en Cours</p>
         <button onclick="document.getElementById('addClientModal').style.display='block'">Ajouter un Client</button>
         <button onclick="document.getElementById('addRepairModal').style.display='block'">Ajouter une Réparation</button>
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -24,12 +23,22 @@
     </header>
 
     <div class="container">
-        <h2>Réparations à Faire</h2>
+        <h2>Réparations: {{ statut }} </h2>
+            <form action="{{ url_for('filtrer') }}" method="post">
+                {{ filtre_form.hidden_tag() }}
+                {{ filtre_form.statuts.label }}
+                    <select id="statuts" name="statuts" class="form-control">
+                        {% for choix_statut, libelle in filtre_form.statuts.choices %}
+                            <option value="{{ choix_statut }}" {% if statut == choix_statut %} selected {% endif %}>{{ libelle }}</option>
+                        {% endfor %}
+                    </select>
+                {{ filtre_form.submit }}
+            </form>
         <div class="repair-list-container">
             <ul class="repair-list">
                 {% for reparation in reparations %}
                 <li>
-                    <h3>Client: {{ reparation.client.client_nom }}</h3>
+                    <h3>Client: {{ reparation.client.client_nom }} // {{ reparation.client.client_email }}</h3>
                     <p>Appareil: {{ reparation.appareil }}</p>
                     <p>Description: {{ reparation.description }}</p>
                     <p>Date de dépôt: {{ reparation.date_depot.strftime('%d %B %Y') }}</p>
@@ -45,10 +54,12 @@
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('addClientModal').style.display='none'">&times;</span>
             <h2>Ajouter un Client</h2>
-            <form action="/ajouter_client" method="post">
+            <form action="{{ url_for('ajouter_client') }}" method="post">
+                {{ client_form.statut_filtre(value=statut)}}
                 {{ client_form.hidden_tag() }}
                 {{ client_form.client_nom.label }} {{ client_form.client_nom }}
-                <button type="submit">Ajouter</button>
+                {{ client_form.client_email.label }} {{ client_form.client_email }}
+                {{ client_form.submit }}
             </form>
         </div>
     </div>
@@ -57,12 +68,13 @@
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('addRepairModal').style.display='none'">&times;</span>
             <h2>Ajouter une Réparation</h2>
-            <form action="/ajouter_reparation" method="post">
+            <form action="{{ url_for('ajouter_reparation') }}" method="post">
+                {{ reparation_form.statut_filtre(value=statut)}}
                 {{ reparation_form.hidden_tag() }}
                 {{ reparation_form.clients.label }} {{ reparation_form.clients }}
                 {{ reparation_form.appareil.label }} {{ reparation_form.appareil }}
                 {{ reparation_form.description.label }} {{ reparation_form.description }}
-                <button type="submit">Ajouter</button>
+                {{ reparation_form.submit }}
             </form>
         </div>
     </div>
@@ -73,12 +85,20 @@
                 <span class="close" onclick="document.getElementById('editRepairModal{{ reparation.id }}').style.display='none'">
                     &times;</span>
                 <h2>Modifier Réparation</h2>
-                <form action="/update_repair/{{ reparation.id }}" method="post">
+                <form action="{{ url_for('update_repair', reparation_id=reparation.id) }}" method="post">
+                    {{ reparation_form_update.statut_filtre(value=statut)}}
                     {{ reparation_form_update.hidden_tag() }}
                     {{ reparation_form_update.appareil.label }} {{ reparation_form_update.appareil(value=reparation.appareil) }}
-                    {{ reparation_form_update.description.label }} {{ reparation_form_update.description(value=reparation.description) }}
-                    {{ reparation_form_update.statut.label }} {{ reparation_form_update.statut(value=reparation.statut) }}
-                    <button type="submit">Mettre à jour</button>
+                    {{ reparation_form_update.description.label }}
+                    <textarea id="description" name="description" class="form-control" placeholder="Description">{{ reparation.description }}
+                    </textarea>
+                    {{ reparation_form_update.statut.label }}
+                    <select id="statut" name="statut" class="form-control">
+                        {% for choix_statut, libelle in reparation_form_update.statut.choices %}
+                            <option value="{{ choix_statut }}" {% if reparation.statut == choix_statut %} selected {% endif %}>{{ libelle }}</option>
+                        {% endfor %}
+                    </select>
+                    {{ reparation_form_update.submit }}
                 </form>
             </div>
         </div>
